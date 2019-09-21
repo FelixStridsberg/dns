@@ -14,7 +14,7 @@ package com.vadeen.dns.constants
  * This way we can get the benefit of a enum like structure, but still the ability to handle unknown data, without
  * having to define the boiler plate every time.
  */
-open class DynamicEnum(val value: Byte) {
+open class DynamicEnum<E>(val value: E) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other)
@@ -26,12 +26,15 @@ open class DynamicEnum(val value: Byte) {
         if (other.javaClass != javaClass)
             return false
 
-        other as DynamicEnum
+        other as DynamicEnum<*>
+
+        if (value == null)
+            return other.value == null
 
         return value == other.value
     }
 
     override fun hashCode(): Int {
-        return value.hashCode()
+        return value?.hashCode() ?: 0
     }
 }
