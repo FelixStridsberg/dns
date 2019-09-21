@@ -62,6 +62,20 @@ class DnsMessageReader(private val stream: DnsStreamReader) {
         )
     }
 
+    /**
+     * Reads question in the format:
+     *                                 1  1  1  1  1  1
+     *   0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     * /                     QNAME                     /
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     * |                     QTYPE                     |
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     * |                     QCLASS                    |
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     *
+     * Ref: https://tools.ietf.org/html/rfc1035#section-4.1.2
+     */
     fun readQuestion(): Question {
         val domainName = stream.readDomainName()
         val resourceType = ResourceType.of(stream.readShort())
@@ -70,6 +84,26 @@ class DnsMessageReader(private val stream: DnsStreamReader) {
         return Question(domainName, resourceType, resourceClass)
     }
 
+    /**
+     * Reads resource record in the format:
+     *                                 1  1  1  1  1  1
+     *   0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     * /                      NAME                     /
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     * |                      TYPE                     |
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     * |                     CLASS                     |
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     * |                      TTL                      |
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     * |                   RDLENGTH                    |
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--|
+     * /                     RDATA                     /
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     *
+     * Ref: https://tools.ietf.org/html/rfc1035#section-4.1.3
+     */
     fun readResource(): Resource {
         val name = stream.readDomainName()
         val resourceType = ResourceType.of(stream.readShort())
