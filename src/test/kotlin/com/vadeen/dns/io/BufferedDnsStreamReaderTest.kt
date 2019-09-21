@@ -2,22 +2,19 @@ package com.vadeen.dns.io
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import java.io.ByteArrayInputStream
 
 internal class BufferedDnsStreamReaderTest {
 
     @Test
     internal fun testReadByte() {
-        val inputStream = ByteArrayInputStream(byteArrayOf(0x22))
-        val dnsStreamReader = DnsStreamReader(inputStream)
+        val dnsStreamReader = DnsStreamReader.of(byteArrayOf(0x22))
 
         assertEquals(0x22, dnsStreamReader.readByte())
     }
 
     @Test
     internal fun testReadByteEndOfStream() {
-        val inputStream = ByteArrayInputStream(byteArrayOf(0x22))
-        val dnsStreamReader = DnsStreamReader(inputStream)
+        val dnsStreamReader = DnsStreamReader.of(byteArrayOf(0x22))
 
         dnsStreamReader.readByte()
 
@@ -27,24 +24,21 @@ internal class BufferedDnsStreamReaderTest {
 
     @Test
     internal fun testReadShort() {
-        val inputStream = ByteArrayInputStream(byteArrayOf(0x00, 0x02))
-        val dnsStreamReader = DnsStreamReader(inputStream)
+        val dnsStreamReader = DnsStreamReader.of(byteArrayOf(0x00, 0x02))
 
         assertEquals(2, dnsStreamReader.readShort())
     }
 
     @Test
     internal fun testReadInt() {
-        val inputStream = ByteArrayInputStream(byteArrayOf(0x01, 0x23, 0x45, 0x67))
-        val dnsStreamReader = DnsStreamReader(inputStream)
+        val dnsStreamReader = DnsStreamReader.of(byteArrayOf(0x01, 0x23, 0x45, 0x67))
 
         assertEquals(19088743, dnsStreamReader.readInt())
     }
 
     @Test
     internal fun testReadShortEndOfStream() {
-        val inputStream = ByteArrayInputStream(byteArrayOf(0x02, 0x00, 0x00))
-        val dnsStreamReader = DnsStreamReader(inputStream)
+        val dnsStreamReader = DnsStreamReader.of(byteArrayOf(0x02, 0x00, 0x00))
 
         dnsStreamReader.readShort()
 
@@ -54,10 +48,9 @@ internal class BufferedDnsStreamReaderTest {
 
     @Test
     internal fun testReadDomainName() {
-            val inputStream = ByteArrayInputStream(
+            val data =
                 byteArrayOf(0x02) + "NS".toByteArray() + byteArrayOf(0x04) + "TEST".toByteArray() + byteArrayOf(0x00)
-            )
-            val dnsStreamReader = DnsStreamReader(inputStream)
+            val dnsStreamReader = DnsStreamReader.of(data)
 
             val domainName = dnsStreamReader.readDomainName()
             assertEquals(2, domainName.size)
@@ -67,10 +60,9 @@ internal class BufferedDnsStreamReaderTest {
 
     @Test
     internal fun testReadDomainNameEndOfStream() {
-        val inputStream = ByteArrayInputStream(
+        val data =
             byteArrayOf(0x02) + "NS".toByteArray() + byteArrayOf(0x04) + "TES".toByteArray()
-        )
-        val dnsStreamReader = DnsStreamReader(inputStream)
+        val dnsStreamReader = DnsStreamReader.of(data)
 
         val exception = assertThrows(DnsIOException::class.java) { dnsStreamReader.readDomainName() }
         assertEquals("Unexpected end of stream.", exception.message)

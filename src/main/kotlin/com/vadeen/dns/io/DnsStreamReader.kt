@@ -1,11 +1,16 @@
 package com.vadeen.dns.io
 
+import java.io.ByteArrayInputStream
 import java.io.InputStream
 
 /**
  * A reader that can read all data types in a dns input stream.
  */
-class DnsStreamReader(private val stream: InputStream) {
+class DnsStreamReader private constructor(private val data: ByteArray, private val stream: InputStream) {
+
+    companion object {
+        fun of(data: ByteArray): DnsStreamReader = DnsStreamReader(data, ByteArrayInputStream(data))
+    }
 
     fun readByte() = readRawByte().toByte()
 
