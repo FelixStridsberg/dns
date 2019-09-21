@@ -1,6 +1,8 @@
 package com.vadeen.dns.io
 
 import com.vadeen.dns.constants.OperationCode
+import com.vadeen.dns.constants.ResourceClass
+import com.vadeen.dns.constants.ResourceType
 import com.vadeen.dns.constants.ResponseCode
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -59,5 +61,23 @@ internal class DnsMessageReaderTest {
         assertEquals(false, header.recursionDesired)
         assertEquals(true, header.recursionAvailable)
         assertEquals(ResponseCode.Unknown(0x0), header.responseCode)
+    }
+
+    @Test
+    internal fun readQuestion() {
+        val inputStream = ByteArrayInputStream(byteArrayOf(
+            0x02, 'n'.toByte(), 's'.toByte(), 0x03, 'c'.toByte(), 'o'.toByte(), 'm'.toByte(), 0x00, // QNAME=ns.com
+            0x01, 0x00,     // QTYPE=256
+            0x00, 0x10      // QCLASS=16
+        ))
+        val dnsStreamReader = DnsStreamReader(inputStream)
+        val dnsMessageReader = DnsMessageReader(dnsStreamReader)
+
+        val question = dnsMessageReader.readQuestion()
+        assertEquals(2, question.name.size)
+        assertTrue("ns".toByteArray().contentEquals(question.name[0]))
+        assertTrue("com".toByteArray().contentEquals(question.name[1]))
+        assertEquals(ResourceType.Unknown(256), question.resourceType)
+        assertEquals(ResourceClass.Unknown(16), question.resourceClass)
     }
 }

@@ -1,8 +1,11 @@
 package com.vadeen.dns.io
 
 import com.vadeen.dns.constants.OperationCode
+import com.vadeen.dns.constants.ResourceClass
+import com.vadeen.dns.constants.ResourceType
 import com.vadeen.dns.constants.ResponseCode
 import com.vadeen.dns.message.Header
+import com.vadeen.dns.message.Question
 
 class DnsMessageReader(private val stream: DnsStreamReader) {
 
@@ -52,5 +55,13 @@ class DnsMessageReader(private val stream: DnsStreamReader) {
             id, response, operationCode, authoritativeAnswer, truncation, recursionDesired, recursionAvailable,
             responseCode, questionRecords, answerRecords, authorityRecords, additionalRecords
         )
+    }
+
+    fun readQuestion(): Question {
+        val domainName = stream.readDomainName()
+        val resourceType = ResourceType.of(stream.readShort())
+        val resourceClass = ResourceClass.of(stream.readShort())
+
+        return Question(domainName, resourceType, resourceClass)
     }
 }
