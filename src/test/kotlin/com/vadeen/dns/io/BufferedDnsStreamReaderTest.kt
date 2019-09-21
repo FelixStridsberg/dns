@@ -34,6 +34,14 @@ internal class BufferedDnsStreamReaderTest {
     }
 
     @Test
+    internal fun testReadInt() {
+        val inputStream = ByteArrayInputStream(byteArrayOf(0x01, 0x23, 0x45, 0x67))
+        val dnsStreamReader = DnsStreamReader(inputStream)
+
+        assertEquals(19088743, dnsStreamReader.readInt())
+    }
+
+    @Test
     internal fun testReadShortEndOfStream() {
         val inputStream = ByteArrayInputStream(byteArrayOf(0x02, 0x00, 0x00))
         val dnsStreamReader = DnsStreamReader(inputStream)
