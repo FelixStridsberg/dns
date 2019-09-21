@@ -6,7 +6,7 @@ import com.vadeen.dns.constants.ResourceType
 import com.vadeen.dns.constants.ResponseCode
 import com.vadeen.dns.message.Header
 import com.vadeen.dns.message.Question
-import com.vadeen.dns.message.Resource
+import com.vadeen.dns.message.record.Record
 import com.vadeen.dns.message.UnknownResource
 
 class DnsMessageReader(private val stream: DnsStreamReader) {
@@ -101,7 +101,7 @@ class DnsMessageReader(private val stream: DnsStreamReader) {
      *
      * Ref: https://tools.ietf.org/html/rfc1035#section-4.1.3
      */
-    fun readResource(): Resource {
+    fun readResource(): Record {
         val name = stream.readDomainName()
         val resourceType = ResourceType.of(stream.readShort())
         val resourceClass = ResourceClass.of(stream.readShort())

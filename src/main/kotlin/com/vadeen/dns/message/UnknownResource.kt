@@ -2,6 +2,7 @@ package com.vadeen.dns.message
 
 import com.vadeen.dns.constants.ResourceClass
 import com.vadeen.dns.constants.ResourceType
+import com.vadeen.dns.message.record.Record
 
 class UnknownResource(
     name: List<ByteArray>,
@@ -9,4 +10,4 @@ class UnknownResource(
     resourceClass: ResourceClass,
     ttl: Int,
     val data: ByteArray
-) : Resource(name, resourceType, resourceClass, ttl)
+) : Record(name, resourceType, resourceClass, ttl)
