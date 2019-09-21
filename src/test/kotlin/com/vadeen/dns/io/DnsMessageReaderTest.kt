@@ -117,7 +117,7 @@ internal class DnsMessageReaderTest {
             0x00, 0x01,                         // TYPE=1 (A)
             0x00, 0x01,                         // CLASS=1 (IN)
             0x00, 0x00, 0x0E, 0x10,             // TTL=3600
-            0x00, 0x04, 0x0A, 0x02, 0x03, 0x04  // DATA=10.2.3.4
+            0x00, 0x04, 0x0A, 0x02, 0x03, 0x04  // IP=10.2.3.4
         )
 
         val dnsStreamReader = DnsStreamReader.of(data)

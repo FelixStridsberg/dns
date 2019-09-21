@@ -13,5 +13,7 @@ internal class ARecordTest {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             ARecord.of(emptyList(), RecordType.A(), RecordClass.IN(), 0, byteArrayOf(0x01, 0x02, 0x03))
         }
+
+        assertEquals("A Record data size must be 4.", exception.message)
     }
 }

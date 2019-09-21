@@ -12,7 +12,7 @@ class ARecord(
 ) : Record(name, recordType, recordClass, ttl) {
 
     init {
-        require(ip.size == 4) { "A Record data size must be 4" }
+        require(ip.size == 4) { "A Record data size must be 4." }
     }
 
     companion object {
