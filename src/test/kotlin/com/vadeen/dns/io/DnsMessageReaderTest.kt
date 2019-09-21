@@ -62,7 +62,7 @@ internal class DnsMessageReaderTest {
         assertEquals(true, header.truncation)
         assertEquals(false, header.recursionDesired)
         assertEquals(true, header.recursionAvailable)
-        assertEquals(ResponseCode.Unknown(0x0), header.responseCode)
+        assertEquals(ResponseCode.NoError(), header.responseCode)
     }
 
     @Test
