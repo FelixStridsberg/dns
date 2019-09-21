@@ -5,10 +5,36 @@ import com.vadeen.dns.constants.RecordClass
 import com.vadeen.dns.constants.RecordType
 import com.vadeen.dns.constants.ResponseCode
 import com.vadeen.dns.message.Header
+import com.vadeen.dns.message.Message
 import com.vadeen.dns.message.Question
 import com.vadeen.dns.message.record.Record
 
 class DnsMessageReader(private val stream: DnsStreamReader) {
+
+    /**
+     * Reads message in the format:
+     * +-----------------------+
+     * |         Header        |
+     * +-----------------------+
+     * /       Questions       /
+     * +-----------------------+
+     * /     Answer records    /
+     * +-----------------------+
+     * /   Authority records   /
+     * +-----------------------+
+     * /   Additional records  /
+     * +-----------------------+
+     */
+    fun readMessage(): Message {
+        val header = readHeader()
+
+        val questions = List(header.questionRecords) { readQuestion() }
+        val answerRecords = List(header.answerRecords) { readRecord() }
+        val authorityRecords = List(header.authorityRecords) { readRecord() }
+        val additionalRecords = List(header.additionalRecords) { readRecord() }
+
+        return Message(header, questions, answerRecords, authorityRecords, additionalRecords)
+    }
 
     /**
      * Reads message header in the format:
