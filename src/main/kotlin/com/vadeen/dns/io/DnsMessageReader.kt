@@ -9,9 +9,6 @@ import com.vadeen.dns.message.Question
 import com.vadeen.dns.message.Resource
 import com.vadeen.dns.message.UnknownResource
 
-/**
- * TODO Short wont work, it's signed and UShort is experimental. Use Int instead.
- */
 class DnsMessageReader(private val stream: DnsStreamReader) {
 
     /**
