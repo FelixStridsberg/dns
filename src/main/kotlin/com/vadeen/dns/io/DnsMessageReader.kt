@@ -1,0 +1,56 @@
+package com.vadeen.dns.io
+
+import com.vadeen.dns.constants.OperationCode
+import com.vadeen.dns.constants.ResponseCode
+import com.vadeen.dns.message.Header
+
+class DnsMessageReader(private val stream: DnsStreamReader) {
+
+    /**
+     * Reads message header in the format:
+     *                                 1  1  1  1  1  1
+     *   0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     * |                      ID                       |
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     * |QR|   Opcode  |AA|TC|RD|RA|   Z    |   RCODE   |
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     * |                    QDCOUNT                    |
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     * |                    ANCOUNT                    |
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     * |                    NSCOUNT                    |
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     * |                    ARCOUNT                    |
+     * +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     *
+     * Ref: https://tools.ietf.org/html/rfc1035#section-4.1.1
+     */
+    fun readHeader(): Header {
+        // First row.
+        val id = stream.readShort()
+
+        // Second row.
+        val byte1 = stream.readRawByte()
+        val response = byte1 and 0x80 != 0
+        val operationCode = OperationCode.of(((byte1 shr 3) and 0x0F).toByte())
+        val authoritativeAnswer = byte1 and 0x04 != 0
+        val truncation = byte1 and 0x02 != 0
+        val recursionDesired = byte1 and 0x01 != 0
+
+        val byte2 = stream.readRawByte()
+        val recursionAvailable = byte2 and 0x80 != 0
+        val responseCode = ResponseCode.of((byte2 and 0x0F).toByte())
+
+        // Third to sixth row.
+        val questionRecords = stream.readShort()
+        val answerRecords = stream.readShort()
+        val authorityRecords = stream.readShort()
+        val additionalRecords = stream.readShort()
+
+        return Header(
+            id, response, operationCode, authoritativeAnswer, truncation, recursionDesired, recursionAvailable,
+            responseCode, questionRecords, answerRecords, authorityRecords, additionalRecords
+        )
+    }
+}
