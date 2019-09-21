@@ -35,7 +35,7 @@ internal class DnsMessageReaderTest {
         assertEquals(true, header.recursionDesired)
         assertEquals(false, header.recursionAvailable)
         assertEquals(ResponseCode.Unknown(0xF), header.responseCode)
-        assertEquals(1, header.questionRecords)
+        assertEquals(1, header.questions)
         assertEquals(16, header.answerRecords)
         assertEquals(256, header.authorityRecords)
         assertEquals(4096, header.additionalRecords)

@@ -12,7 +12,7 @@ data class Header(
     val recursionDesired: Boolean,
     val recursionAvailable: Boolean,
     val responseCode: ResponseCode,
-    val questionRecords: Int,
+    val questions: Int,
     val answerRecords: Int,
     val authorityRecords: Int,
     val additionalRecords: Int

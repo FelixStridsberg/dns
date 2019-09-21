@@ -28,7 +28,7 @@ class DnsMessageReader(private val stream: DnsStreamReader) {
     fun readMessage(): Message {
         val header = readHeader()
 
-        val questions = List(header.questionRecords) { readQuestion() }
+        val questions = List(header.questions) { readQuestion() }
         val answerRecords = List(header.answerRecords) { readRecord() }
         val authorityRecords = List(header.authorityRecords) { readRecord() }
         val additionalRecords = List(header.additionalRecords) { readRecord() }
