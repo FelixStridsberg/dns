@@ -1,5 +1,8 @@
 package com.vadeen.dns.io
 
+import com.vadeen.dns.exception.DnsIOException
+import com.vadeen.dns.exception.DnsParseException
+import com.vadeen.dns.exception.NotImplementedException
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 
@@ -18,23 +21,56 @@ class DnsStreamReader private constructor(private val data: ByteArray, private v
 
     fun readInt() = (readShort() shl 16) or readShort()
 
-    fun readDomainName(): List<ByteArray> {
-        val labels = mutableListOf<ByteArray>()
+    fun readBytes(n: Int) = readBytes(stream, n)
+
+    fun readDomainName() = readDomainName(stream)
+
+    fun readRawByte() = readRawByte(stream)
+
+    /**
+     * The domain names is either represented as:
+     * - A sequence of labels.
+     * - A pointer to a sequence of labels.
+     * - A sequence of labels ending with a pointer.
+     *
+     * If the offset is 0, that's the end.
+     * If the offset starts with 0xC, then it's a pointer combined with the next byte.
+     * Otherwise it is a length of the upcoming label.
+     *
+     * Ref: https://tools.ietf.org/html/rfc1035#section-4.1.4
+     */
+    private fun readDomainName(stream: InputStream, recursion: Int = 0): List<ByteArray> {
+        if (recursion > 1)
+            throw DnsParseException("Recursive label pointers not allowed.")
+
+        val result = mutableListOf<ByteArray>()
         while (true) {
-            val label = readLabel() ?: break
-            labels.add(label)
+            val length = readRawByte(stream)
+            if (length == 0) // End of labels
+                break
+
+            // Pointer
+            if (length and 0xC0 == 0xC0) {
+                val offset = ((length and 0x3F) shl 8) or readRawByte(stream)
+                val offsetStream = ByteArrayInputStream(data, offset, 1000)
+                val labels = readDomainName(offsetStream, recursion + 1)
+                result.addAll(labels)
+                return result
+            }
+
+            // 0x80 and 0x40 is reserved for future use.
+            if (length and 0xC0 != 0) {
+                throw NotImplementedException("Invalid label type.")
+            }
+
+            // Simple label, just read it.
+            result.add(readBytes(stream, length))
         }
-        return labels
+
+        return result
     }
 
-    fun readRawByte(): Int {
-        val byte = stream.read()
-        if (byte == -1)
-            throw DnsIOException("Unexpected end of stream.")
-        return byte
-    }
-
-    fun readBytes(n: Int): ByteArray {
+    private fun readBytes(stream: InputStream, n: Int): ByteArray {
         val data = stream.readNBytes(n)
         if (data.size < n)
             throw DnsIOException("Unexpected end of stream.")
@@ -42,11 +78,10 @@ class DnsStreamReader private constructor(private val data: ByteArray, private v
         return data
     }
 
-    private fun readLabel(): ByteArray? {
-        val length = readRawByte()
-        if (length == 0)
-            return null
-
-        return readBytes(length)
+    private fun readRawByte(stream: InputStream): Int {
+        val byte = stream.read()
+        if (byte == -1)
+            throw DnsIOException("Unexpected end of stream.")
+        return byte
     }
 }
