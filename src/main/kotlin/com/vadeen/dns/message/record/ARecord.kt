@@ -1,19 +1,23 @@
-package com.vadeen.dns.message
+package com.vadeen.dns.message.record
 
 import com.vadeen.dns.constants.ResourceClass
 import com.vadeen.dns.constants.ResourceType
-import com.vadeen.dns.message.record.Record
 
-class UnknownResource(
+class ARecord(
     name: List<ByteArray>,
     resourceType: ResourceType,
     resourceClass: ResourceClass,
     ttl: Int,
-    val data: ByteArray
+    val ip: ByteArray
 ) : Record(name, resourceType, resourceClass, ttl) {
+
+    init {
+        require(ip.size == 4) { "A Record data size must be 4" }
+    }
 
     companion object {
         fun of(name: List<ByteArray>, rtype: ResourceType, rclass: ResourceClass, ttl: Int, data: ByteArray) =
-            UnknownResource(name, rtype, rclass, ttl, data)
+            ARecord(name, rtype, rclass, ttl, data)
     }
+
 }

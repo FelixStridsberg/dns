@@ -109,6 +109,6 @@ class DnsMessageReader(private val stream: DnsStreamReader) {
         val dataLen = stream.readShort()
         val data = stream.readBytes(dataLen)
 
-        return UnknownResource(name, resourceType, resourceClass, ttl, data)
+        return Record.of(name, resourceType, resourceClass, ttl, data)
     }
 }

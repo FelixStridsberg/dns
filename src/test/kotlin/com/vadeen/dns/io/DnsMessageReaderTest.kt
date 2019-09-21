@@ -5,6 +5,7 @@ import com.vadeen.dns.constants.ResourceClass
 import com.vadeen.dns.constants.ResourceType
 import com.vadeen.dns.constants.ResponseCode
 import com.vadeen.dns.message.UnknownResource
+import com.vadeen.dns.message.record.ARecord
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -107,5 +108,32 @@ internal class DnsMessageReaderTest {
         assertEquals(ResourceClass.Unknown(16), resource.resourceClass)
         assertEquals(3600, resource.ttl)
         assertTrue(byteArrayOf(0x01, 0x02, 0x03).contentEquals(resource.data))
+    }
+
+    @Test
+    internal fun readARecord() {
+        val data = byteArrayOf(
+            0x02, 'n'.toByte(), 's'.toByte(), 0x03, 'c'.toByte(), 'o'.toByte(), 'm'.toByte(), 0x00, // NAME=ns.com
+            0x00, 0x01,                         // TYPE=1 (A)
+            0x00, 0x01,                         // CLASS=1 (IN)
+            0x00, 0x00, 0x0E, 0x10,             // TTL=3600
+            0x00, 0x04, 0x0A, 0x02, 0x03, 0x04  // DATA=10.2.3.4
+        )
+
+        val dnsStreamReader = DnsStreamReader.of(data)
+        val dnsMessageReader = DnsMessageReader(dnsStreamReader)
+
+        val resource = dnsMessageReader.readResource()
+        assertTrue(resource is ARecord)
+
+        resource as ARecord
+
+        assertEquals(2, resource.name.size)
+        assertTrue("ns".toByteArray().contentEquals(resource.name[0]))
+        assertTrue("com".toByteArray().contentEquals(resource.name[1]))
+        assertEquals(ResourceType.A(), resource.resourceType)
+        assertEquals(ResourceClass.IN(), resource.resourceClass)
+        assertEquals(3600, resource.ttl)
+        assertTrue(byteArrayOf(0x0A, 0x02, 0x03, 0x04).contentEquals(resource.ip))
     }
 }
