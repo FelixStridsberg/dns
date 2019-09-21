@@ -7,13 +7,9 @@ import java.io.InputStream
  */
 class DnsStreamReader(private val stream: InputStream) {
 
-    fun readByte(): Byte {
-        return readRawByte().toByte()
-    }
+    fun readByte() = readRawByte().toByte()
 
-    fun readShort(): Short {
-        return ((readRawByte() shl 8) or readRawByte()).toShort()
-    }
+    fun readShort() = ((readRawByte() shl 8) or readRawByte()).toShort()
 
     fun readDomainName(): List<ByteArray> {
         val labels = mutableListOf<ByteArray>()

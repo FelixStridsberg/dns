@@ -34,7 +34,5 @@ open class DynamicEnum<E>(val value: E) {
         return value == other.value
     }
 
-    override fun hashCode(): Int {
-        return value?.hashCode() ?: 0
-    }
+    override fun hashCode() = value?.hashCode() ?: 0
 }
