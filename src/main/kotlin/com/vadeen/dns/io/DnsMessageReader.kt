@@ -6,7 +6,12 @@ import com.vadeen.dns.constants.ResourceType
 import com.vadeen.dns.constants.ResponseCode
 import com.vadeen.dns.message.Header
 import com.vadeen.dns.message.Question
+import com.vadeen.dns.message.Resource
+import com.vadeen.dns.message.UnknownResource
 
+/**
+ * TODO Short wont work, it's signed and UShort is experimental. Use Int instead.
+ */
 class DnsMessageReader(private val stream: DnsStreamReader) {
 
     /**
@@ -63,5 +68,16 @@ class DnsMessageReader(private val stream: DnsStreamReader) {
         val resourceClass = ResourceClass.of(stream.readShort())
 
         return Question(domainName, resourceType, resourceClass)
+    }
+
+    fun readResource(): Resource {
+        val name = stream.readDomainName()
+        val resourceType = ResourceType.of(stream.readShort())
+        val resourceClass = ResourceClass.of(stream.readShort())
+        val ttl = stream.readInt()
+        val dataLen = stream.readShort()
+        val data = stream.readBytes(dataLen.toInt())
+
+        return UnknownResource(name, resourceType, resourceClass, ttl, data)
     }
 }

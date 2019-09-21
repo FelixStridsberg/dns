@@ -29,15 +29,19 @@ class DnsStreamReader(private val stream: InputStream) {
         return byte
     }
 
+    fun readBytes(n: Int): ByteArray {
+        val data = stream.readNBytes(n)
+        if (data.size < n)
+            throw DnsIOException("Unexpected end of stream.")
+
+        return data
+    }
+
     private fun readLabel(): ByteArray? {
         val length = readRawByte()
         if (length == 0)
             return null
 
-        val data = stream.readNBytes(length)
-        if (data.size < length)
-            throw DnsIOException("Unexpected end of stream.")
-
-        return data
+        return readBytes(length)
     }
 }
