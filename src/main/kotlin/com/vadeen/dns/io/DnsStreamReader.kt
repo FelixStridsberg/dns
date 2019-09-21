@@ -9,9 +9,9 @@ class DnsStreamReader(private val stream: InputStream) {
 
     fun readByte() = readRawByte().toByte()
 
-    fun readShort() = ((readRawByte() shl 8) or readRawByte()).toShort()
+    fun readShort() = (readRawByte() shl 8) or readRawByte()
 
-    fun readInt() = (readShort().toInt() shl 16) or readShort().toInt()
+    fun readInt() = (readShort() shl 16) or readShort()
 
     fun readDomainName(): List<ByteArray> {
         val labels = mutableListOf<ByteArray>()

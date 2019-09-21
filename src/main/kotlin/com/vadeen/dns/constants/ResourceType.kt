@@ -1,10 +1,10 @@
 package com.vadeen.dns.constants
 
-sealed class ResourceType(type: Short) : DynamicEnum<Short>(type) {
+sealed class ResourceType(type: Int) : DynamicEnum<Int>(type) {
 
-    class Unknown(type: Short) : ResourceType(type)
+    class Unknown(type: Int) : ResourceType(type)
 
     companion object {
-        fun of(type: Short): ResourceType = Unknown(type)
+        fun of(type: Int): ResourceType = Unknown(type)
     }
 }
