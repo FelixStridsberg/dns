@@ -1,13 +1,12 @@
 package com.vadeen.dns.io
 
 import com.vadeen.dns.constants.OperationCode
-import com.vadeen.dns.constants.ResourceClass
-import com.vadeen.dns.constants.ResourceType
+import com.vadeen.dns.constants.RecordClass
+import com.vadeen.dns.constants.RecordType
 import com.vadeen.dns.constants.ResponseCode
 import com.vadeen.dns.message.Header
 import com.vadeen.dns.message.Question
 import com.vadeen.dns.message.record.Record
-import com.vadeen.dns.message.UnknownResource
 
 class DnsMessageReader(private val stream: DnsStreamReader) {
 
@@ -75,10 +74,10 @@ class DnsMessageReader(private val stream: DnsStreamReader) {
      */
     fun readQuestion(): Question {
         val domainName = stream.readDomainName()
-        val resourceType = ResourceType.of(stream.readShort())
-        val resourceClass = ResourceClass.of(stream.readShort())
+        val recordType = RecordType.of(stream.readShort())
+        val recordClass = RecordClass.of(stream.readShort())
 
-        return Question(domainName, resourceType, resourceClass)
+        return Question(domainName, recordType, recordClass)
     }
 
     /**
@@ -101,14 +100,14 @@ class DnsMessageReader(private val stream: DnsStreamReader) {
      *
      * Ref: https://tools.ietf.org/html/rfc1035#section-4.1.3
      */
-    fun readResource(): Record {
+    fun readRecord(): Record {
         val name = stream.readDomainName()
-        val resourceType = ResourceType.of(stream.readShort())
-        val resourceClass = ResourceClass.of(stream.readShort())
+        val recordType = RecordType.of(stream.readShort())
+        val recordClass = RecordClass.of(stream.readShort())
         val ttl = stream.readInt()
         val dataLen = stream.readShort()
         val data = stream.readBytes(dataLen)
 
-        return Record.of(name, resourceType, resourceClass, ttl, data)
+        return Record.of(name, recordType, recordClass, ttl, data)
     }
 }

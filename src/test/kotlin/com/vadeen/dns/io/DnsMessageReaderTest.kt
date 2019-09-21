@@ -1,10 +1,10 @@
 package com.vadeen.dns.io
 
 import com.vadeen.dns.constants.OperationCode
-import com.vadeen.dns.constants.ResourceClass
-import com.vadeen.dns.constants.ResourceType
+import com.vadeen.dns.constants.RecordClass
+import com.vadeen.dns.constants.RecordType
 import com.vadeen.dns.constants.ResponseCode
-import com.vadeen.dns.message.UnknownResource
+import com.vadeen.dns.message.record.UnknownRecord
 import com.vadeen.dns.message.record.ARecord
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -79,12 +79,12 @@ internal class DnsMessageReaderTest {
         assertEquals(2, question.name.size)
         assertTrue("ns".toByteArray().contentEquals(question.name[0]))
         assertTrue("com".toByteArray().contentEquals(question.name[1]))
-        assertEquals(ResourceType.Unknown(256), question.resourceType)
-        assertEquals(ResourceClass.Unknown(16), question.resourceClass)
+        assertEquals(RecordType.Unknown(256), question.recordType)
+        assertEquals(RecordClass.Unknown(16), question.recordClass)
     }
 
     @Test
-    internal fun readResource() {
+    internal fun readRecord() {
         val data = byteArrayOf(
             0x02, 'n'.toByte(), 's'.toByte(), 0x03, 'c'.toByte(), 'o'.toByte(), 'm'.toByte(), 0x00, // NAME=ns.com
             0x01, 0x00,                     // TYPE=256
@@ -96,18 +96,18 @@ internal class DnsMessageReaderTest {
         val dnsStreamReader = DnsStreamReader.of(data)
         val dnsMessageReader = DnsMessageReader(dnsStreamReader)
 
-        val resource = dnsMessageReader.readResource()
-        assertTrue(resource is UnknownResource)
+        val record = dnsMessageReader.readRecord()
+        assertTrue(record is UnknownRecord)
 
-        resource as UnknownResource
+        record as UnknownRecord
 
-        assertEquals(2, resource.name.size)
-        assertTrue("ns".toByteArray().contentEquals(resource.name[0]))
-        assertTrue("com".toByteArray().contentEquals(resource.name[1]))
-        assertEquals(ResourceType.Unknown(256), resource.resourceType)
-        assertEquals(ResourceClass.Unknown(16), resource.resourceClass)
-        assertEquals(3600, resource.ttl)
-        assertTrue(byteArrayOf(0x01, 0x02, 0x03).contentEquals(resource.data))
+        assertEquals(2, record.name.size)
+        assertTrue("ns".toByteArray().contentEquals(record.name[0]))
+        assertTrue("com".toByteArray().contentEquals(record.name[1]))
+        assertEquals(RecordType.Unknown(256), record.recordType)
+        assertEquals(RecordClass.Unknown(16), record.recordClass)
+        assertEquals(3600, record.ttl)
+        assertTrue(byteArrayOf(0x01, 0x02, 0x03).contentEquals(record.data))
     }
 
     @Test
@@ -123,17 +123,17 @@ internal class DnsMessageReaderTest {
         val dnsStreamReader = DnsStreamReader.of(data)
         val dnsMessageReader = DnsMessageReader(dnsStreamReader)
 
-        val resource = dnsMessageReader.readResource()
-        assertTrue(resource is ARecord)
+        val record = dnsMessageReader.readRecord()
+        assertTrue(record is ARecord)
 
-        resource as ARecord
+        record as ARecord
 
-        assertEquals(2, resource.name.size)
-        assertTrue("ns".toByteArray().contentEquals(resource.name[0]))
-        assertTrue("com".toByteArray().contentEquals(resource.name[1]))
-        assertEquals(ResourceType.A(), resource.resourceType)
-        assertEquals(ResourceClass.IN(), resource.resourceClass)
-        assertEquals(3600, resource.ttl)
-        assertTrue(byteArrayOf(0x0A, 0x02, 0x03, 0x04).contentEquals(resource.ip))
+        assertEquals(2, record.name.size)
+        assertTrue("ns".toByteArray().contentEquals(record.name[0]))
+        assertTrue("com".toByteArray().contentEquals(record.name[1]))
+        assertEquals(RecordType.A(), record.recordType)
+        assertEquals(RecordClass.IN(), record.recordClass)
+        assertEquals(3600, record.ttl)
+        assertTrue(byteArrayOf(0x0A, 0x02, 0x03, 0x04).contentEquals(record.ip))
     }
 }

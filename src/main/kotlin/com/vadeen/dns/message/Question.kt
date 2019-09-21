@@ -1,10 +1,10 @@
 package com.vadeen.dns.message
 
-import com.vadeen.dns.constants.ResourceClass
-import com.vadeen.dns.constants.ResourceType
+import com.vadeen.dns.constants.RecordClass
+import com.vadeen.dns.constants.RecordType
 
 data class Question(
     val name: List<ByteArray>,
-    val resourceType: ResourceType,
-    val resourceClass: ResourceClass
+    val recordType: RecordType,
+    val recordClass: RecordClass
 )
