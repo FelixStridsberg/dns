@@ -2,6 +2,7 @@ package com.vadeen.dns.message.record
 
 import com.vadeen.dns.constants.RecordClass
 import com.vadeen.dns.constants.RecordType
+import java.net.InetAddress
 
 class ARecord(
     name: List<ByteArray>,
@@ -20,4 +21,19 @@ class ARecord(
             ARecord(name, rtype, rclass, ttl, data)
     }
 
+    override fun toString(): String {
+        val record = super.toString()
+
+        // Hack to make the octets unsigned without using the experimental UByte.
+        val o1 = byteToInt(ip[0])
+        val o2 = byteToInt(ip[1])
+        val o3 = byteToInt(ip[2])
+        val o4 = byteToInt(ip[3])
+
+        val fullName = name.joinToString(separator = ".") { String(it) }
+        return String.format("$record $o1.$o2.$o3.$o4",
+            fullName, ttl, recordClass, recordType)
+    }
+
+    private fun byteToInt(byte: Byte) = byte.toInt() and 0xff
 }

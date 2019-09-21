@@ -16,4 +16,10 @@ abstract class Record(
                 is RecordType.A -> ARecord.of(name, rtype, rclass, ttl, data)
             }
     }
+
+    override fun toString(): String {
+        val fullName = name.joinToString(separator = ".") { String(it) }
+        return String.format("%-25s %-10d %-10s %-10s",
+            fullName, ttl, recordClass, recordType)
+    }
 }

@@ -15,4 +15,11 @@ class UnknownRecord(
         fun of(name: List<ByteArray>, rtype: RecordType, rclass: RecordClass, ttl: Int, data: ByteArray) =
             UnknownRecord(name, rtype, rclass, ttl, data)
     }
+
+    override fun toString(): String {
+        val record = super.toString()
+        val dataLen = data.size
+
+        return "$record data_len=$dataLen"
+    }
 }
