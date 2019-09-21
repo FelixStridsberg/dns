@@ -1,0 +1,15 @@
+# Gradle
+.gradle
+/build
+/buildSrc/build
+/buildSrc/subprojects/*/build
+/subprojects/*/build
+/subprojects/docs/src/samples/**/build
+/subprojects/internal-android-performance-testing/build-android-libs
+
+# IDEA
+.idea
+*.iws
+*.iml
+*.ipr
+
