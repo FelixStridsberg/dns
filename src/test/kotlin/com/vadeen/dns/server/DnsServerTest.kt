@@ -1,4 +1,4 @@
-package com.vadeen.dns
+package com.vadeen.dns.server
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -7,6 +7,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
 import java.net.DatagramPacket
 import java.net.DatagramSocket
+import java.net.InetAddress
 
 internal class DnsServerTest {
 
@@ -16,13 +17,18 @@ internal class DnsServerTest {
 
         given(socket.receive(any())).willAnswer {
             val packet = it.arguments[0] as DatagramPacket
+            packet.address = InetAddress.getByName("127.0.0.1")
+            packet.port = 53
             packet.data = simpleQuestion()
             Unit
         }
 
         val server = DnsServer(socket)
-        val message = server.receive()
+        val request = server.receive()
+        val message = request.message
 
+        assertEquals(InetAddress.getByName("127.0.0.1"), request.address)
+        assertEquals(53, request.port)
         assertEquals(1, message.questions.size)
         assertEquals(0, message.answerRecords.size)
         assertEquals(0, message.authorityRecords.size)
