@@ -16,4 +16,11 @@ data class Header(
     val answerRecords: Int,
     val authorityRecords: Int,
     val additionalRecords: Int
-)
+) {
+
+    override fun toString(): String{
+        return "Header (" +
+                "id: $id, opcode: $operationCode, qr: $isResponse, aa: $authoritativeAnswer, tc: $truncation, " +
+                "rc: $recursionDesired, ra: $recursionAvailable, rcode: $responseCode)"
+    }
+}
