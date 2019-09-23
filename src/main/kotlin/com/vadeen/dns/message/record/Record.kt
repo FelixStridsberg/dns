@@ -22,4 +22,6 @@ abstract class Record(
         return String.format("%-25s %-10d %-10s %-10s",
             fullName, ttl, recordClass, recordType)
     }
+
+    abstract fun toBytes(): ByteArray
 }

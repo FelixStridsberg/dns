@@ -21,6 +21,8 @@ class ARecord(
             ARecord(name, rtype, rclass, ttl, data)
     }
 
+    override fun toBytes() = ip
+
     override fun toString(): String {
         val record = super.toString()
 

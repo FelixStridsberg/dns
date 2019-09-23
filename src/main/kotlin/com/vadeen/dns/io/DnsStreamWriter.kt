@@ -23,4 +23,8 @@ class DnsStreamWriter(private val stream: OutputStream) {
         }
         stream.write(0x00)
     }
+
+    fun writeBytes(data: ByteArray) {
+        stream.write(data)
+    }
 }

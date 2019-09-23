@@ -107,7 +107,7 @@ internal class DnsMessageReaderTest {
         assertEquals(RecordType.Unknown(256), record.recordType)
         assertEquals(RecordClass.Unknown(16), record.recordClass)
         assertEquals(3600, record.ttl)
-        assertTrue(byteArrayOf(0x01, 0x02, 0x03).contentEquals(record.data))
+        assertTrue(byteArrayOf(0x01, 0x02, 0x03).contentEquals(record.toBytes()))
     }
 
     @Test
@@ -135,6 +135,7 @@ internal class DnsMessageReaderTest {
         assertEquals(RecordClass.IN(), record.recordClass)
         assertEquals(3600, record.ttl)
         assertTrue(byteArrayOf(0x0A, 0x02, 0x03, 0x04).contentEquals(record.ip))
+        assertTrue(record.toBytes().contentEquals(record.ip))
     }
 
     @Test

@@ -8,13 +8,15 @@ class UnknownRecord(
     recordType: RecordType,
     recordClass: RecordClass,
     ttl: Int,
-    val data: ByteArray
+    private val data: ByteArray
 ) : Record(name, recordType, recordClass, ttl) {
 
     companion object {
         fun of(name: List<ByteArray>, rtype: RecordType, rclass: RecordClass, ttl: Int, data: ByteArray) =
             UnknownRecord(name, rtype, rclass, ttl, data)
     }
+
+    override fun toBytes() = data
 
     override fun toString(): String {
         val record = super.toString()
