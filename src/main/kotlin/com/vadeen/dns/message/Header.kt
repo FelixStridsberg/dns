@@ -21,6 +21,7 @@ data class Header(
     override fun toString(): String{
         return "Header (" +
                 "id: $id, opcode: $operationCode, qr: $isResponse, aa: $authoritativeAnswer, tc: $truncation, " +
-                "rc: $recursionDesired, ra: $recursionAvailable, rcode: $responseCode)"
+                "rc: $recursionDesired, ra: $recursionAvailable, rcode: $responseCode)\n" +
+                "questions: $questions, answers: $answerRecords, authorities: $authorityRecords, additionals: $additionalRecords"
     }
 }

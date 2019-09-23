@@ -15,7 +15,8 @@ internal class HeaderTest {
             ResponseCode.NoError(), 1, 2, 3, 4)
 
         assertEquals(
-            "Header (id: 54321, opcode: QUERY, qr: true, aa: false, tc: false, rc: true, ra: true, rcode: NOERR)",
+            "Header (id: 54321, opcode: QUERY, qr: true, aa: false, tc: false, rc: true, ra: true, rcode: NOERR)\n" +
+            "questions: 1, answers: 2, authorities: 3, additionals: 4",
             header.toString()
         )
     }
