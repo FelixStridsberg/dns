@@ -57,7 +57,7 @@ internal class DnsMessageReaderTest {
         val header = dnsMessageReader.readHeader()
         assertEquals(12, header.id)
         assertEquals(true, header.isResponse)
-        assertEquals(OperationCode.Unknown(0x0), header.operationCode)
+        assertEquals(OperationCode.Query(), header.operationCode)
         assertEquals(true, header.authoritativeAnswer)
         assertEquals(true, header.truncation)
         assertEquals(false, header.recursionDesired)
