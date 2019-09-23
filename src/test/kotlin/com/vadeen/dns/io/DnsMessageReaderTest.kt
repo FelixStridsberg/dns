@@ -188,13 +188,13 @@ internal class DnsMessageReaderTest {
         assertEquals(1, message.authorityRecords.size)
         assertEquals(1, message.additionalRecords.size)
 
-        assertEquals("n1", String(message.questions[0].name[0]));
-        assertEquals("n2", String(message.questions[1].name[0]));
+        assertEquals("n1", String(message.questions[0].name[0]))
+        assertEquals("n2", String(message.questions[1].name[0]))
 
-        assertEquals("n1", String(message.answerRecords[0].name[0]));
-        assertEquals("n2", String(message.answerRecords[1].name[0]));
+        assertEquals("n1", String(message.answerRecords[0].name[0]))
+        assertEquals("n2", String(message.answerRecords[1].name[0]))
 
-        assertEquals("n3", String(message.authorityRecords[0].name[0]));
-        assertEquals("n4", String(message.additionalRecords[0].name[0]));
+        assertEquals("n3", String(message.authorityRecords[0].name[0]))
+        assertEquals("n4", String(message.additionalRecords[0].name[0]))
     }
 }

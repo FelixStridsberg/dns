@@ -2,7 +2,6 @@ package com.vadeen.dns.message.record
 
 import com.vadeen.dns.constants.RecordClass
 import com.vadeen.dns.constants.RecordType
-import java.net.InetAddress
 
 class ARecord(
     name: List<ByteArray>,

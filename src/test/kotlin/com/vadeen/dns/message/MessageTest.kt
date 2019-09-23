@@ -13,10 +13,18 @@ internal class MessageTest {
 
     @Test
     fun testToString() {
-        var header = Header(
+        val header = Header(
             54321, true, OperationCode.Query(),
-            false, false, true, true,
-            ResponseCode.NoError(), 1, 2, 3, 4)
+            authoritativeAnswer = false,
+            truncation = false,
+            recursionDesired = true,
+            recursionAvailable = true,
+            responseCode = ResponseCode.NoError(),
+            questions = 1,
+            answerRecords = 2,
+            authorityRecords = 3,
+            additionalRecords = 4
+        )
         val name = listOf("ns".toByteArray(), "vadeen".toByteArray(), "com".toByteArray())
         val question = Question(name, RecordType.A(), RecordClass.IN())
 
@@ -46,10 +54,18 @@ internal class MessageTest {
 
     @Test
     fun testToStringNoRecords() {
-        var header = Header(
+        val header = Header(
             54321, true, OperationCode.Query(),
-            false, false, true, true,
-            ResponseCode.NoError(), 1, 2, 3, 4)
+            authoritativeAnswer = false,
+            truncation = false,
+            recursionDesired = true,
+            recursionAvailable = true,
+            responseCode = ResponseCode.NoError(),
+            questions = 1,
+            answerRecords = 2,
+            authorityRecords = 3,
+            additionalRecords = 4
+        )
 
         val message = Message(header, emptyList(), emptyList(), emptyList(), emptyList())
 

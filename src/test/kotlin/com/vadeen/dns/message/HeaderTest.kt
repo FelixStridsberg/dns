@@ -9,10 +9,18 @@ internal class HeaderTest {
 
     @Test
     internal fun testToString() {
-        var header = Header(
+        val header = Header(
             54321, true, OperationCode.Query(),
-            false, false, true, true,
-            ResponseCode.NoError(), 1, 2, 3, 4)
+            authoritativeAnswer = false,
+            truncation = false,
+            recursionDesired = true,
+            recursionAvailable = true,
+            responseCode = ResponseCode.NoError(),
+            questions = 1,
+            answerRecords = 2,
+            authorityRecords = 3,
+            additionalRecords = 4
+        )
 
         assertEquals(
             "Header (id: 54321, opcode: QUERY, qr: true, aa: false, tc: false, rc: true, ra: true, rcode: NOERR)\n" +
