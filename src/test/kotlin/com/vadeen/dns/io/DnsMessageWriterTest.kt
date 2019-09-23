@@ -5,6 +5,7 @@ import com.vadeen.dns.constants.RecordClass
 import com.vadeen.dns.constants.RecordType
 import com.vadeen.dns.constants.ResponseCode
 import com.vadeen.dns.message.Header
+import com.vadeen.dns.message.Message
 import com.vadeen.dns.message.Question
 import com.vadeen.dns.message.record.UnknownRecord
 import org.junit.jupiter.api.Test
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import java.io.ByteArrayOutputStream
 
+// TODO clean up, too much duplicate code.
 internal class DnsMessageWriterTest {
 
     private var outputStream = ByteArrayOutputStream()
@@ -24,6 +26,62 @@ internal class DnsMessageWriterTest {
         outputStream = ByteArrayOutputStream()
         streamWriter = DnsStreamWriter(outputStream)
         writer = DnsMessageWriter(streamWriter)
+    }
+
+    @Test
+    internal fun testWriteMessage() {
+        // Header
+        val header = Header(
+            9999, true, OperationCode.Query(),
+            authoritativeAnswer = false,
+            truncation = true,
+            recursionDesired = false,
+            recursionAvailable = true,
+            responseCode = ResponseCode.NoError(),
+            questions = 2,
+            answerRecords = 1,
+            authorityRecords = 1,
+            additionalRecords = 1
+        )
+        val headerOutput = byteArrayOf(
+            0x027, 0x0F,                    // ID = 9999
+            0x82.toByte(), 0x80.toByte(),   // Opcode, RCODE, flags.
+            0x00, 0x02,                     // Questions
+            0x00, 0x01,                     // Answer records
+            0x00, 0x01,                     // Authority records
+            0x00, 0x01                      // Additional records
+        )
+
+        // Question
+        val name = listOf("ns".toByteArray(), "com".toByteArray())
+        val question = Question(name, RecordType.of(600), RecordClass.of(600))
+        val questionOutput = byteArrayOf(
+            0x02, 'n'.toByte(), 's'.toByte(), 0x03, 'c'.toByte(), 'o'.toByte(), 'm'.toByte(), 0x00,
+            0x02, 0x58,     // Type=600
+            0x02, 0x58      // Class=600
+        )
+
+        //Record
+        val recordData = byteArrayOf(0x01, 0x02, 0x03, 0x04, 0x05)
+        val record = UnknownRecord(name, RecordType.of(600), RecordClass.of(600), 100, recordData)
+        val recordOutput = byteArrayOf(
+            0x02, 'n'.toByte(), 's'.toByte(), 0x03, 'c'.toByte(), 'o'.toByte(), 'm'.toByte(), 0x00,
+            0x02, 0x58,                         // Type=600
+            0x02, 0x58,                         // Class=600
+            0x00, 0x00, 0x00, 0x64,             // Ttl=100
+            0x00, 0x05, 0x01, 0x02, 0x03, 0x04, 0x05  // Data
+        )
+
+        val message = Message(header, listOf(question, question), listOf(record), listOf(record), listOf(record))
+        writer.writeMessage(message)
+
+        val expectedOutput = headerOutput +
+                questionOutput + questionOutput +
+                recordOutput + recordOutput + recordOutput
+
+        val output = outputStream.toByteArray()!!
+        assertEquals(expectedOutput.size, output.size)
+        assertTrue(output.contentEquals(expectedOutput))
     }
 
     @Test

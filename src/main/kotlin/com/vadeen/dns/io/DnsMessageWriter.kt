@@ -1,10 +1,24 @@
 package com.vadeen.dns.io
 
 import com.vadeen.dns.message.Header
+import com.vadeen.dns.message.Message
 import com.vadeen.dns.message.Question
 import com.vadeen.dns.message.record.Record
 
+/**
+ * Current limitation:
+ * Optional domain system compression scheme not implemented (https://tools.ietf.org/html/rfc1035#section-4.1.4)
+ */
 class DnsMessageWriter(private val stream: DnsStreamWriter) {
+
+    fun writeMessage(message: Message) {
+        writeHeader(message.header)
+
+        message.questions.forEach { writeQuestion(it) }
+        message.answerRecords.forEach { writeRecord(it) }
+        message.authorityRecords.forEach { writeRecord(it) }
+        message.additionalRecords.forEach { writeRecord(it) }
+    }
 
     /**
      * Ref: https://tools.ietf.org/html/rfc1035#section-4.1.1
