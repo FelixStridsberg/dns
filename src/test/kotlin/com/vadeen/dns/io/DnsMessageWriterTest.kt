@@ -4,6 +4,7 @@ import com.vadeen.dns.constants.OperationCode
 import com.vadeen.dns.constants.RecordClass
 import com.vadeen.dns.constants.RecordType
 import com.vadeen.dns.constants.ResponseCode
+import com.vadeen.dns.message.DomainName
 import com.vadeen.dns.message.Header
 import com.vadeen.dns.message.Message
 import com.vadeen.dns.message.Question
@@ -53,7 +54,7 @@ internal class DnsMessageWriterTest {
         )
 
         // Question
-        val name = listOf("ns".toByteArray(), "com".toByteArray())
+        val name = DomainName.of("ns.com")
         val question = Question(name, RecordType.of(600), RecordClass.of(600))
         val questionOutput = byteArrayOf(
             0x02, 'n'.toByte(), 's'.toByte(), 0x03, 'c'.toByte(), 'o'.toByte(), 'm'.toByte(), 0x00,
@@ -144,7 +145,7 @@ internal class DnsMessageWriterTest {
 
     @Test
     internal fun testWriteQuestion() {
-        val name = listOf("ns".toByteArray(), "com".toByteArray())
+        val name = DomainName.of("ns.com")
 
         val question = Question(name, RecordType.of(600), RecordClass.of(600))
         writer.writeQuestion(question)
@@ -161,7 +162,7 @@ internal class DnsMessageWriterTest {
 
     @Test
     internal fun testWriteRecord() {
-        val name = listOf("ns".toByteArray(), "com".toByteArray())
+        val name = DomainName.of("ns.com")
         val data = byteArrayOf(0x01, 0x02, 0x03, 0x04, 0x05)
 
         val record = UnknownRecord(name, RecordType.of(600), RecordClass.of(600), 100, data)

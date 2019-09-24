@@ -2,9 +2,10 @@ package com.vadeen.dns.message.record
 
 import com.vadeen.dns.constants.RecordClass
 import com.vadeen.dns.constants.RecordType
+import com.vadeen.dns.message.DomainName
 
 class ARecord(
-    name: List<ByteArray>,
+    name: DomainName,
     recordType: RecordType,
     recordClass: RecordClass,
     ttl: Int,
@@ -16,7 +17,7 @@ class ARecord(
     }
 
     companion object {
-        fun of(name: List<ByteArray>, rtype: RecordType, rclass: RecordClass, ttl: Int, data: ByteArray) =
+        fun of(name: DomainName, rtype: RecordType, rclass: RecordClass, ttl: Int, data: ByteArray) =
             ARecord(name, rtype, rclass, ttl, data)
     }
 
@@ -31,9 +32,7 @@ class ARecord(
         val o3 = byteToInt(ip[2])
         val o4 = byteToInt(ip[3])
 
-        val fullName = name.joinToString(separator = ".") { String(it) }
-        return String.format("$record $o1.$o2.$o3.$o4",
-            fullName, ttl, recordClass, recordType)
+        return String.format("$record $o1.$o2.$o3.$o4")
     }
 
     private fun byteToInt(byte: Byte) = byte.toInt() and 0xff

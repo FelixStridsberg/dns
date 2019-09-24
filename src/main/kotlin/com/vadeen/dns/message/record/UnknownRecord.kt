@@ -2,9 +2,10 @@ package com.vadeen.dns.message.record
 
 import com.vadeen.dns.constants.RecordClass
 import com.vadeen.dns.constants.RecordType
+import com.vadeen.dns.message.DomainName
 
 class UnknownRecord(
-    name: List<ByteArray>,
+    name: DomainName,
     recordType: RecordType,
     recordClass: RecordClass,
     ttl: Int,
@@ -12,7 +13,7 @@ class UnknownRecord(
 ) : Record(name, recordType, recordClass, ttl) {
 
     companion object {
-        fun of(name: List<ByteArray>, rtype: RecordType, rclass: RecordClass, ttl: Int, data: ByteArray) =
+        fun of(name: DomainName, rtype: RecordType, rclass: RecordClass, ttl: Int, data: ByteArray) =
             UnknownRecord(name, rtype, rclass, ttl, data)
     }
 

@@ -10,7 +10,7 @@ internal class QuestionTest {
 
     @Test
     fun testToString() {
-        val name = listOf("ns".toByteArray(), "vadeen".toByteArray(), "com".toByteArray())
+        val name = DomainName.of("ns.vadeen.com")
         val question = Question(name, RecordType.A(), RecordClass.IN())
 
         assertEquals("ns.vadeen.com                        IN         A", question.toString())

@@ -76,9 +76,9 @@ internal class DnsMessageReaderTest {
         val dnsMessageReader = DnsMessageReader(dnsStreamReader)
 
         val question = dnsMessageReader.readQuestion()
-        assertEquals(2, question.name.size)
-        assertTrue("ns".toByteArray().contentEquals(question.name[0]))
-        assertTrue("com".toByteArray().contentEquals(question.name[1]))
+        assertEquals(2, question.name.labels.size)
+        assertTrue("ns".toByteArray().contentEquals(question.name.labels[0]))
+        assertTrue("com".toByteArray().contentEquals(question.name.labels[1]))
         assertEquals(RecordType.Unknown(256), question.recordType)
         assertEquals(RecordClass.Unknown(16), question.recordClass)
     }
@@ -101,9 +101,9 @@ internal class DnsMessageReaderTest {
 
         record as UnknownRecord
 
-        assertEquals(2, record.name.size)
-        assertTrue("ns".toByteArray().contentEquals(record.name[0]))
-        assertTrue("com".toByteArray().contentEquals(record.name[1]))
+        assertEquals(2, record.name.labels.size)
+        assertTrue("ns".toByteArray().contentEquals(record.name.labels[0]))
+        assertTrue("com".toByteArray().contentEquals(record.name.labels[1]))
         assertEquals(RecordType.Unknown(256), record.recordType)
         assertEquals(RecordClass.Unknown(16), record.recordClass)
         assertEquals(3600, record.ttl)
@@ -128,9 +128,9 @@ internal class DnsMessageReaderTest {
 
         record as ARecord
 
-        assertEquals(2, record.name.size)
-        assertTrue("ns".toByteArray().contentEquals(record.name[0]))
-        assertTrue("com".toByteArray().contentEquals(record.name[1]))
+        assertEquals(2, record.name.labels.size)
+        assertTrue("ns".toByteArray().contentEquals(record.name.labels[0]))
+        assertTrue("com".toByteArray().contentEquals(record.name.labels[1]))
         assertEquals(RecordType.A(), record.recordType)
         assertEquals(RecordClass.IN(), record.recordClass)
         assertEquals(3600, record.ttl)
@@ -188,13 +188,13 @@ internal class DnsMessageReaderTest {
         assertEquals(1, message.authorityRecords.size)
         assertEquals(1, message.additionalRecords.size)
 
-        assertEquals("n1", String(message.questions[0].name[0]))
-        assertEquals("n2", String(message.questions[1].name[0]))
+        assertEquals("n1", String(message.questions[0].name.labels[0]))
+        assertEquals("n2", String(message.questions[1].name.labels[0]))
 
-        assertEquals("n1", String(message.answerRecords[0].name[0]))
-        assertEquals("n2", String(message.answerRecords[1].name[0]))
+        assertEquals("n1", String(message.answerRecords[0].name.labels[0]))
+        assertEquals("n2", String(message.answerRecords[1].name.labels[0]))
 
-        assertEquals("n3", String(message.authorityRecords[0].name[0]))
-        assertEquals("n4", String(message.additionalRecords[0].name[0]))
+        assertEquals("n3", String(message.authorityRecords[0].name.labels[0]))
+        assertEquals("n4", String(message.additionalRecords[0].name.labels[0]))
     }
 }

@@ -25,7 +25,7 @@ internal class MessageTest {
             authorityRecords = 3,
             additionalRecords = 4
         )
-        val name = listOf("ns".toByteArray(), "vadeen".toByteArray(), "com".toByteArray())
+        val name = DomainName.of("ns.vadeen.com")
         val question = Question(name, RecordType.A(), RecordClass.IN())
 
         val ip = byteArrayOf(0x0A, 0x01, 0x01, 0xFF.toByte())

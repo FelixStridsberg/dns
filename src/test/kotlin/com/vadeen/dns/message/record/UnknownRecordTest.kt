@@ -2,6 +2,7 @@ package com.vadeen.dns.message.record
 
 import com.vadeen.dns.constants.RecordClass
 import com.vadeen.dns.constants.RecordType
+import com.vadeen.dns.message.DomainName
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -9,7 +10,7 @@ internal class UnknownRecordTest {
 
     @Test
     internal fun testToString() {
-        val names = listOf("ns".toByteArray(), "vadeen".toByteArray(), "com".toByteArray())
+        val names = DomainName.of("ns.vadeen.com")
         val bytes = byteArrayOf(0x0A, 0x01, 0x01, 0xFF.toByte(), 0x00, 0x00, 0x00)
         val record = UnknownRecord.of(names, RecordType.Unknown(99), RecordClass.IN(), 5444, bytes)
 

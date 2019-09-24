@@ -37,7 +37,7 @@ class DnsMessageWriter(private val stream: DnsStreamWriter) {
      * Ref: https://tools.ietf.org/html/rfc1035#section-4.1.2
      */
     fun writeQuestion(question: Question) {
-        stream.writeLabels(question.name)
+        stream.writeLabels(question.name.labels)
         stream.writeShort(question.recordType.value)
         stream.writeShort(question.recordClass.value)
     }
@@ -46,7 +46,7 @@ class DnsMessageWriter(private val stream: DnsStreamWriter) {
      * Ref: https://tools.ietf.org/html/rfc1035#section-4.1.3
      */
     fun writeRecord(record: Record) {
-        stream.writeLabels(record.name)
+        stream.writeLabels(record.name.labels)
         stream.writeShort(record.recordType.value)
         stream.writeShort(record.recordClass.value)
         stream.writeInt(record.ttl)
