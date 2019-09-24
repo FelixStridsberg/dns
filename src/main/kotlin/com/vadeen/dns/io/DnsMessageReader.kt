@@ -100,7 +100,7 @@ class DnsMessageReader(private val stream: DnsStreamReader) {
      * Ref: https://tools.ietf.org/html/rfc1035#section-4.1.2
      */
     fun readQuestion(): Question {
-        val domainName = DomainName(stream.readDomainName())
+        val domainName = DomainName(stream.readDomainName().toTypedArray())
         val recordType = RecordType.of(stream.readShort())
         val recordClass = RecordClass.of(stream.readShort())
 
@@ -128,7 +128,7 @@ class DnsMessageReader(private val stream: DnsStreamReader) {
      * Ref: https://tools.ietf.org/html/rfc1035#section-4.1.3
      */
     fun readRecord(): Record {
-        val name = DomainName(stream.readDomainName())
+        val name = DomainName(stream.readDomainName().toTypedArray())
         val recordType = RecordType.of(stream.readShort())
         val recordClass = RecordClass.of(stream.readShort())
         val ttl = stream.readInt()

@@ -16,7 +16,7 @@ class DnsStreamWriter(private val stream: OutputStream) {
         writeShort(value)
     }
 
-    fun writeLabels(labels: List<ByteArray>) {
+    fun writeLabels(labels: Array<ByteArray>) {
         for (label in labels) {
             stream.write(label.size)
             stream.write(label)
