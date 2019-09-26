@@ -39,7 +39,7 @@ class DnsStreamReader private constructor(private val data: ByteArray, private v
      *
      * Ref: https://tools.ietf.org/html/rfc1035#section-4.1.4
      */
-    private fun readDomainName(stream: InputStream, recursion: Int = 0): List<ByteArray> {
+    private fun readDomainName(stream: InputStream, recursion: Int = 0): Array<ByteArray> {
         if (recursion > 1)
             throw DnsParseException("Recursive label pointers not allowed.")
 
@@ -55,7 +55,7 @@ class DnsStreamReader private constructor(private val data: ByteArray, private v
                 val offsetStream = ByteArrayInputStream(data, offset, 1000)
                 val labels = readDomainName(offsetStream, recursion + 1)
                 result.addAll(labels)
-                return result
+                return result.toTypedArray()
             }
 
             // 0x80 and 0x40 is reserved for future use.
@@ -67,7 +67,7 @@ class DnsStreamReader private constructor(private val data: ByteArray, private v
             result.add(readBytes(stream, length))
         }
 
-        return result
+        return result.toTypedArray()
     }
 
     private fun readBytes(stream: InputStream, n: Int): ByteArray {
