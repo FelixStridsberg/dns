@@ -1,9 +1,15 @@
 package com.vadeen.dns.server
 
+import com.vadeen.dns.getTestHeader
+import com.vadeen.dns.getTestQuestion
+import com.vadeen.dns.message.Message
+import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
+import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import java.net.DatagramPacket
 import java.net.DatagramSocket
@@ -11,15 +17,64 @@ import java.net.InetAddress
 
 internal class DnsServerTest {
 
+    /*
+    @Test
+    internal fun test() {
+        val server = DnsServer(8080)
+
+        val client = DnsClient(InetAddress.getByName("127.0.0.53"), 53)
+
+        // Get message from DNS server.
+        val message = server.receive()
+
+        // Send message to a real DNS server.
+        client.send(message)
+
+        // Wait for response form real DNS server.
+        val clientReply = client.receive()
+
+        // Create a reply containing the real DNS reply.
+        message.reply(clientReply)
+
+        // Send reply.
+        server.send(reply)
+    }
+     */
+
+    @Test
+    internal fun testServerSend() {
+        val socket = mock(DatagramSocket::class.java)
+
+        val testHeader = getTestHeader(1, 0, 0, 0)
+        val testQuestion = getTestQuestion()
+        val testMessage = Message(testHeader.obj, listOf(testQuestion.obj), emptyList(), emptyList(), emptyList())
+
+        val server = DnsServer(socket)
+        server.send(DnsPacket(InetAddress.getByName("127.0.0.1"), 53, testMessage))
+
+        val packetCaptor = ArgumentCaptor.forClass(DatagramPacket::class.java)
+        Mockito.verify(socket, Mockito.times(1)).send(packetCaptor.capture())
+
+        val packet = packetCaptor.value
+
+        assertEquals(InetAddress.getByName("127.0.0.1"), packet.address)
+        assertEquals(53, packet.port)
+        assertArrayEquals(testHeader.data + testQuestion.data, packet.data)
+    }
+
     @Test
     internal fun testServerReceive() {
         val socket = mock(DatagramSocket::class.java)
+
+        val testHeader = getTestHeader(1, 0, 0, 0)
+        val testQuestion = getTestQuestion()
+        val testMessage = Message(testHeader.obj, listOf(testQuestion.obj), emptyList(), emptyList(), emptyList())
 
         given(socket.receive(any())).willAnswer {
             val packet = it.arguments[0] as DatagramPacket
             packet.address = InetAddress.getByName("127.0.0.1")
             packet.port = 53
-            packet.data = simpleQuestion()
+            packet.data = testHeader.data + testQuestion.data
             Unit
         }
 
@@ -29,28 +84,6 @@ internal class DnsServerTest {
 
         assertEquals(InetAddress.getByName("127.0.0.1"), request.address)
         assertEquals(53, request.port)
-        assertEquals(1, message.questions.size)
-        assertEquals(0, message.answerRecords.size)
-        assertEquals(0, message.authorityRecords.size)
-        assertEquals(0, message.additionalRecords.size)
-    }
-
-    private fun simpleQuestion(): ByteArray {
-        val header = byteArrayOf(
-            0x04, 0xB0.toByte(),    // ID=1200
-            0x01.toByte(), 0x00,    // QR=0, OPCODE=0, AA=0, TC=0, RD=1, RA=0, RCODE=0
-            0x00, 0x01,             // Question records = 1
-            0x00, 0x00,             // Answer records = 0
-            0x00, 0x00,             // Authority records = 0
-            0x00, 0x00              // Additional records = 0
-        )
-
-        val question = byteArrayOf(
-            0x02, 'n'.toByte(), 's'.toByte(), 0x03, 'c'.toByte(), 'o'.toByte(), 'm'.toByte(), 0x00, // QNAME=ns.com
-            0x00, 0x01,     // QTYPE=A
-            0x00, 0x01      // QCLASS=IN
-        )
-
-        return header + question
+        assertEquals(testMessage, message)
     }
 }
